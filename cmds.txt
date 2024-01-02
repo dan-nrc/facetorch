@@ -1,0 +1,2 @@
+sudo docker compose build facetorch-gpu 
+docker run -it --runtime=nvidia --gpus all tomasgajarsky/facetorch-gpu

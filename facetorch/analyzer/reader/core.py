@@ -4,6 +4,9 @@ from codetiming import Timer
 from facetorch.base import BaseReader
 from facetorch.datastruct import ImageData
 from facetorch.logger import LoggerJsonFile
+from PIL.Image import Image
+from typing import Union
+import numpy as np
 
 logger = LoggerJsonFile().logger
 
@@ -30,20 +33,27 @@ class ImageReader(BaseReader):
         )
 
     @Timer("ImageReader.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
-    def run(self, path_image: str, fix_img_size: bool = False) -> ImageData:
+    def run(self, image: Union[Image,str,np.ndarray], fix_img_size: bool = False) -> ImageData:
         """Reads an image from a path and returns a tensor of the image with values between 0-255 and shape (batch, channels, height, width). The order of color channels is RGB. PyTorch and Torchvision are used to read the image.
 
         Args:
-            path_image (str): Path to the image.
+            image (Image, str): Path to the image or PIL image
             fix_img_size (bool): Whether to resize the image to a fixed size. If False, the size_portrait and size_landscape are ignored. Default is False.
 
         Returns:
             ImageData: ImageData object with image tensor and pil Image.
         """
-        data = ImageData(path_input=path_image)
-        data.img = torchvision.io.read_image(
-            data.path_input, mode=torchvision.io.ImageReadMode.RGB
-        )
+        data = ImageData()
+        if type(image) is str:
+            data.img = torchvision.io.read_image(
+                image, mode=torchvision.io.ImageReadMode.RGB
+            )
+        elif type(image) is Image:
+            data.img = torchvision.transforms.PILToTensor(image)
+        
+        elif type(image) is np.ndarray:
+            data.img = torch.tensor(image).permute(2,0,1)
+
         data.img = data.img.unsqueeze(0)
         data.img = data.img.to(self.device)
 

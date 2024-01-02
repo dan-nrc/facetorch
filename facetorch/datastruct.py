@@ -142,8 +142,6 @@ class ImageData:
     """The main data class used for passing data between the different facetorch modules.
 
     Attributes:
-        path_input (str): Path to the input image.
-        path_output (str): Path to the output image where the resulting image is saved.
         img (torch.Tensor): Original image tensor used for drawing purposes.
         tensor (torch.Tensor): Processed image tensor.
         dims (Dimensions): Dimensions of the image (height, width).
@@ -152,9 +150,6 @@ class ImageData:
         version (str): Version of the facetorch library.
 
     """
-
-    path_input: str = field(default_factory=str)
-    path_output: Optional[str] = field(default_factory=str)
     img: torch.Tensor = field(default_factory=torch.Tensor)
     tensor: torch.Tensor = field(default_factory=torch.Tensor)
     dims: Dimensions = field(default_factory=Dimensions)

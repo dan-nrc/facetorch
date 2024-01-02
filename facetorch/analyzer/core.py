@@ -1,5 +1,5 @@
 from typing import Optional, Union
-
+from PIL.Image import Image
 import torch
 from codetiming import Timer
 from facetorch.analyzer.predictor.core import FacePredictor
@@ -8,6 +8,7 @@ from facetorch.logger import LoggerJsonFile
 from importlib.metadata import version
 from hydra.utils import instantiate
 from omegaconf import OmegaConf
+import numpy as np
 
 logger = LoggerJsonFile().logger
 
@@ -80,23 +81,21 @@ class FaceAnalyzer(object):
     @Timer("FaceAnalyzer.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
     def run(
         self,
-        path_image: str,
+        image: Union[Image,str,np.ndarray],
         batch_size: int = 8,
         fix_img_size: bool = False,
         return_img_data: bool = False,
         include_tensors: bool = False,
-        path_output: Optional[str] = None,
     ) -> Union[Response, ImageData]:
         """Reads image, detects faces, unifies the detected faces, predicts facial features
          and returns analyzed data.
 
         Args:
-            path_image (str): Path to the input image.
+            image (str): input image.
             batch_size (int): Batch size for making predictions on the faces. Default is 8.
             fix_img_size (bool): If True, resizes the image to the size specified in reader. Default is False.
             return_img_data (bool): If True, returns all image data including tensors, otherwise only returns the faces. Default is False.
             include_tensors (bool): If True, removes tensors from the returned data object. Default is False.
-            path_output (Optional[str]): Path where to save the image with detected faces. If None, the image is not saved. Default: None.
 
         Returns:
             Union[Response, ImageData]: If return_img_data is False, returns a Response object containing the faces and their facial features. If return_img_data is True, returns the entire ImageData object.
@@ -120,10 +119,8 @@ class FaceAnalyzer(object):
             return data
 
         self.logger.info("Running FaceAnalyzer")
-        self.logger.info("Reading image", extra={"path_image": path_image})
-        data = self.reader.run(path_image, fix_img_size=fix_img_size)
-        path_output = None if path_output == "None" else path_output
-        data.path_output = path_output
+        self.logger.info("Reading image")
+        data = self.reader.run(image, fix_img_size=fix_img_size)
 
         try:
             data.version = version("facetorch")
@@ -166,3 +163,5 @@ class FaceAnalyzer(object):
         else:
             self.logger.debug("Returning response with faces", extra=response.__dict__)
             return response
+
+

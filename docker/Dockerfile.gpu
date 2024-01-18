@@ -23,7 +23,7 @@ RUN ln -sf /usr/bin/python3.9 /usr/bin/python3 & \
 RUN pip install --upgrade pip
 
 # Install facetorch from PyPI
-RUN pip install facetorch
+RUN pip install torch==2.0.0 torchvision==0.15.1 --index-url https://download.pytorch.org/whl/cu118
 RUN pip install opencv-python
 COPY . .
 RUN pip install -e .

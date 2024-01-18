@@ -216,41 +216,10 @@ analyzer:
         optimize_transform: ${analyzer.optimize_transforms}
         labels:
         - abstract
-  utilizer:
-    align:
-      _target_: facetorch.analyzer.utilizer.align.Lmk3DMeshPose
-      transform: None
-      device:
-        _target_: torch.device
-        type: ${analyzer.device}
-      optimize_transform: false
-      downloader_meta:
-        _target_: facetorch.downloader.DownloaderGDrive
-        file_id: 11tdAcFuSXqCCf58g52WT1Rpa8KuQwe2o
-        path_local: /opt/facetorch/data/3dmm/meta.pt
-      image_size: 120
-    draw_boxes:
-      _target_: facetorch.analyzer.utilizer.draw.BoxDrawer
-      transform: None
-      device:
-        _target_: torch.device
-        type: ${analyzer.device}
-      optimize_transform: false
-      color: green
-      line_width: 3
-    draw_landmarks:
-      _target_: facetorch.analyzer.utilizer.draw.LandmarkDrawerTorch
-      transform: None
-      device:
-        _target_: torch.device
-        type: ${analyzer.device}
-      optimize_transform: false
-      width: 2
-      color: green
   logger:
     _target_: facetorch.logger.LoggerJsonFile
     name: facetorch
-    level: 20
+    level: 0
     path_file: /opt/facetorch/logs/facetorch/main.log
     json_format: '%(asctime)s %(levelname)s %(message)s'
 main:
